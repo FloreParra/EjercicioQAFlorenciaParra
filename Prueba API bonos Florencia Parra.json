@@ -1,0 +1,156 @@
+{
+	"info": {
+		"_postman_id": "a1ce5f2b-0bc9-4952-9406-bf50a03ca892",
+		"name": "Prueba API",
+		"description": "Realizar una evaluación técnica",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45305359",
+		"_collection_link": "https://florencia-4011124.postman.co/workspace/Florencia's-Workspace~0e05d29f-cf57-4623-895e-d9f3158e71b9/collection/45305359-a1ce5f2b-0bc9-4952-9406-bf50a03ca892?action=share&source=collection_link&creator=45305359"
+	},
+	"item": [
+		{
+			"name": "bono array",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"// Obtener array de bonos y el índice actual\r",
+							"let bonos = JSON.parse(pm.collectionVariables.get(\"bonos\"));\r",
+							"let index = parseInt(pm.collectionVariables.get(\"bonoIndex\") || \"0\");\r",
+							"\r",
+							"// Establecer el bono actual\r",
+							"let bonoActual = bonos[index];\r",
+							"pm.collectionVariables.set(\"bonoActual\", bonoActual);\r",
+							"\r",
+							"// Preparar el índice para la próxima iteración\r",
+							"if (index + 1 < bonos.length) {\r",
+							"    pm.collectionVariables.set(\"bonoIndex\", index + 1);\r",
+							"} else {\r",
+							"    // Reiniciar si llega al final\r",
+							"    pm.collectionVariables.set(\"bonoIndex\", 0);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let responseJson = pm.response.json();\r",
+							"let bonoEsperado = pm.collectionVariables.get(\"bonoActual\");\r",
+							"\r",
+							"// Validar que shortName coincida con el bono actual\r",
+							"pm.test(\"shortName debe coincidir con bonoActual\", function () {\r",
+							"    pm.expect(responseJson.shortName).to.eql(bonoEsperado);\r",
+							"});\r",
+							"\r",
+							"// Validar que algunos campos importantes no sean null\r",
+							"pm.test(\"name no debe ser null\", function () {\r",
+							"    pm.expect(responseJson.name).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"debtType no debe ser null\", function () {\r",
+							"    pm.expect(responseJson.debtType).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"links.self no debe ser null\", function () {\r",
+							"    pm.expect(responseJson.links.self).to.not.be.null;\r",
+							"});\r",
+							"\r",
+							"// Validar que el campo 'coupons' sea igual a 'self' + '/coupons'\r",
+							"let selfLink = responseJson.links.self;\r",
+							"let couponsLink = responseJson.links.coupons;\r",
+							"\r",
+							"pm.test(\"El campo 'coupons' debe ser igual a 'self' + '/coupons'\", function () {\r",
+							"    let expectedCouponsLink = selfLink + \"/coupons\";\r",
+							"    pm.expect(couponsLink).to.eql(expectedCouponsLink);\r",
+							"});\r",
+							"\r",
+							"// Validar que el campo 'identifiers' sea igual a 'self' + '/identifiers'\r",
+							"let identifiersLink = responseJson.links.identifiers;\r",
+							"\r",
+							"pm.test(\"El campo 'identifiers' debe ser igual a 'self' + '/identifiers'\", function () {\r",
+							"    let expectedIdentifiersLink = selfLink + \"/identifiers\";\r",
+							"    pm.expect(identifiersLink).to.eql(expectedIdentifiersLink);\r",
+							"});\r",
+							"\r",
+							"//Validar que el campo 'paymentSummary' sea igual a 'self' + '/payment-payment-summary'\r",
+							"let paymentSummaryLink = responseJson.links.paymentSummary;\r",
+							"\r",
+							"pm.test(\"El campo 'paymentSummary' debe ser igual a 'self' + '/payment-payment-summary'\", function () {\r",
+							"    let expectedPaymentLink = selfLink + \"/payment-summary\";\r",
+							"    pm.expect(paymentSummaryLinkLink).to.eql(expectedPaymentLink);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{LOCATION}}/bonds/{{bonoActual}}",
+					"host": [
+						"{{LOCATION}}"
+					],
+					"path": [
+						"bonds",
+						"{{bonoActual}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "LOCATION",
+			"value": "https://webejemplo",
+			"type": "default"
+		},
+		{
+			"key": "AL30",
+			"value": "",
+			"type": "default",
+			"disabled": true
+		},
+		{
+			"key": "bonoActual",
+			"value": "[\"AL30\", \"GD30\", \"AE38\", \"GD35\", \"AL35\"]",
+			"type": "string"
+		},
+		{
+			"key": "bonoIndex",
+			"value": "0",
+			"type": "string"
+		}
+	]
+}
